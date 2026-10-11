@@ -46,6 +46,12 @@ for (const width of [1440, 768, 390, 360]) {
       await page.locator(`#${id} .primary`).click();
       await expect(page).toHaveURL(new RegExp(`#${id}-shelf$`));
     }
+    if (width < 850) await page.getByRole('button', { name: 'Open navigation' }).click();
+    await page.getByRole('link', { name: 'Connect', exact: true }).click();
+    await expect(page.locator('#contact-title')).toBeVisible();
+    await expect(page.locator('.contact-art')).toHaveJSProperty('naturalWidth', 1536);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({ path: `test-results/contact-${width}.png`, animations: 'disabled' });
     await page.getByRole('link', { name: 'Back to top' }).click();
     await expect(page).toHaveURL(/#home$/);
     await expect.poll(() => page.evaluate(() => Math.round(scrollY))).toBe(0);
