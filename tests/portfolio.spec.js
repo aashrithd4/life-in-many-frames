@@ -41,3 +41,10 @@ for (const width of [1440, 768, 390, 360]) {
     expect(errors).toEqual([]);
   });
 }
+
+test('Builder direct link opens its chapter', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await page.goto('https://aashrithd4.github.io/life-in-many-frames/#builder');
+  await expect(page.locator('#builder-title')).toBeVisible();
+  await expect.poll(() => page.locator('#builder').evaluate(el => Math.round(el.getBoundingClientRect().top))).toBe(68);
+});
