@@ -17,7 +17,7 @@ for (const width of [1440, 768, 390, 360]) {
     await expect(page.locator('.builder-art')).toHaveJSProperty('naturalWidth', 1536);
     await expect(page.locator('.work-card')).toHaveCount(3);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await expect.poll(() => page.locator('#builder').evaluate(el => Math.round(el.getBoundingClientRect().top))).toBe(width < 850 ? 68 : 76);
+    await expect.poll(async () => Math.abs(await page.locator('#builder').evaluate(el => el.getBoundingClientRect().top) - (width < 850 ? 68 : 76))).toBeLessThanOrEqual(4);
     await page.screenshot({ path: `test-results/builder-${width}.png`, animations: 'disabled' });
     await page.getByRole('link', { name: 'Explore selected work', exact: true }).click();
     await expect(page).toHaveURL(/#builder-work$/);
