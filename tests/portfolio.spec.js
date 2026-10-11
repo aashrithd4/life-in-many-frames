@@ -14,7 +14,7 @@ for (const width of [1440, 768, 390, 360]) {
     await page.getByRole('link', { name: 'Builder', exact: true }).click();
     await expect(page).toHaveURL(/#builder$/);
     await expect(page.locator('#builder-title')).toBeVisible();
-    await expect(page.locator('.builder-art')).toHaveJSProperty('naturalWidth', 1536);
+    await expect(page.locator('#builder .builder-art')).toHaveJSProperty('naturalWidth', 1536);
     await expect(page.locator('.work-card')).toHaveCount(3);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await expect.poll(async () => Math.abs(await page.locator('#builder').evaluate(el => el.getBoundingClientRect().top) - (width < 850 ? 68 : 76))).toBeLessThanOrEqual(4);
