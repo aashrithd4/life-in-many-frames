@@ -34,6 +34,18 @@ for (const width of [1440, 768, 390, 360]) {
     await expect(page.locator('.story-art')).toHaveJSProperty('naturalWidth', 1536);
     const badAnchors = await page.evaluate(() => [...document.querySelectorAll('a[href^="#"]')].filter(a => !document.querySelector(a.getAttribute('href'))).length);
     expect(badAnchors).toBe(0);
+    for (const id of ['curious', 'ripple', 'beyond', 'storyteller']) {
+      if (width < 850) await page.getByRole('button', { name: 'Open navigation' }).click();
+      await page.locator(`#main-navigation a[href="#${id}"]`).click();
+      await expect(page.locator(`#${id}-title`)).toBeVisible();
+      await expect(page.locator(`#${id} .frame-art`)).toHaveJSProperty('naturalWidth', 1536);
+      await expect(page.locator(`#${id} .frame-card`)).toHaveCount(3);
+      await expect.poll(async () => Math.abs(await page.locator(`#${id}`).evaluate(el => el.getBoundingClientRect().top) - (width < 850 ? 68 : 76))).toBeLessThanOrEqual(4);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await page.screenshot({ path: `test-results/${id}-${width}.png`, animations: 'disabled' });
+      await page.locator(`#${id} .primary`).click();
+      await expect(page).toHaveURL(new RegExp(`#${id}-shelf$`));
+    }
     await page.getByRole('link', { name: 'Back to top' }).click();
     await expect(page).toHaveURL(/#home$/);
     await expect.poll(() => page.evaluate(() => Math.round(scrollY))).toBe(0);
